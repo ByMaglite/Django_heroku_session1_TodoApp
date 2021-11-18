@@ -1,0 +1,134 @@
+{%extends 'base.html'%} {%block content%}
+
+<div>
+    <div class="container pt-4">
+        <div class="row mt-2 p-0">
+            <div class="col-lg-4 mx-auto p-0 shadow">
+                <div class="alert alert-warning text-center">
+                    <h2>Add ToDo</h2>
+                </div>
+                <div class="p-4">
+                    <form action="/add-todo/" method="POST">
+                        {% csrf_token%} {{form.as_p}}
+                        <hr>
+                        <input type="submit" value="ADD" class="btn btn-success">
+                    </form>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="border">
+                    {% if todos|length == 0 %}
+                    <div class="p-4">
+                        <br>
+                        <br>
+                        <div class="alert alert-danger text-center">
+                            <p class="" style="font-size: 30px;">ToDo Lists</p>
+                        </div>
+                        <br>
+                        <br>
+                    </div>
+                    {%else%}
+                    <div class="p-2">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Delete</th>
+                                    <th>Change Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for todo in todos%}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{todo.title}}</td>
+                                    {% if todo.status == 'C'%}
+                                    <td>
+                                        <a class="btn"> ✅</a>
+                                    </td>
+                                    {% elif todo.status == 'I'%}
+                                    <td>
+                                        <a class="btn">🚧</a>
+                                    </td>
+                                    {% elif todo.status == 'P'%}
+                                    <td>
+                                        <a class="btn">💤</a>
+                                    </td>
+                                    {%endif%}
+
+                                    <td>{{todo.priority}}</td>
+
+                                    <td>
+                                        <a href="delete-todo/{{todo.id}}" title="Delete" class="">🗑️</a> 
+                                    </td>
+                                    <td>
+                                        {% if todo.status == 'P'%}
+                                            <a href="/status-todo/{{todo.id}}/C" title="Mark Completed" class="">✅</a> 
+                                            <a href="/status-todo/{{todo.id}}/I" title="Mark In-Progres" class="">🚧</a>
+                                        {%elif todo.status == 'I'%}
+                                            <a href="/status-todo/{{todo.id}}/C" title="Mark Completed" class="">✅</a>
+                                            <a href="/status-todo/{{todo.id}}/P" title="Mark Pending" class="">💤</a>
+                                        {%else%}
+                                            <a href="/status-todo/{{todo.id}}/I" title="Mark In-Progres" class="">🚧</a>
+                                            <a href="/status-todo/{{todo.id}}/P" title="Mark Pending" class="">💤</a> 
+                                        {%endif%}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {%endif%}
+                </div>
+            </div>
+        </div>
+    </div>
+    {%endblock%}
+
+
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for todo in todos%}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{todo.Title}}</td>
+                {% if todo.status == 'C'%}
+                <td>
+                    <a href="" class="btn">✔️</a>
+                </td>
+                {% elif todo.status == 'I'%}
+                <td>
+                    <a class="btn">🚧</a>
+                </td>
+                {%else%}
+                <td>
+                    <a href="" class="btn">🕘</a>
+                </td>
+                {%endif%}
+
+                <td>{{todo.priority}}</td>
+
+                <td>
+                    <a href="delete-todo/{{todo.id}}" title="Delete" class="">🗑️</a> {% if todo.status == 'P'%}
+                    <a href="/status-todo/{{todo.id}}/C" title="Mark Completed" class="">✔️</a> {%elif todo.status == 'I'%}
+                    <a href="/status-todo/{{todo.id}}/I" title="Makr In-Progress" class="">🚧</a> {%else%}
+                    <a href="/status-todo/{{todo.id}}/P" title="Makr Pending" class="">🕘</a> {%endif%}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
